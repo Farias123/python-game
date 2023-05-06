@@ -38,9 +38,12 @@ class enemy:
         self.attack = attack
 
 def playerFeedback():
-    sleep(1)
+    sleep(0.5)
     input("Press enter to continue")
-    os.system("clear")
+    if os.name == "posix":
+        os.system("clear")
+    else:
+        os.system("cls")
 
 def characterCreation():
     print("Hi there adventurer. In this adventure you will have to make choices.")
@@ -52,7 +55,6 @@ def characterCreation():
     print("2-Mage") 
     print("3-Rogue")
     charClass = input()
-    os.system("clear")
     player = char(charName,charClass)
     return player
 
@@ -61,10 +63,6 @@ def battle(player, enemy):
     poisondmg = 0
     while True:
         while True:
-            if poisondmg > 0:
-                enemy.HP -= poisondmg
-                print("Your stacked poison dealt",poisondmg,"dmg.")
-                playerFeedback()
             print("You have ",round(player.HP)," HP and ",player.MP,"MP.")
             print(enemy.name," has ", round(enemy.HP)," HP.")
             print("Your turn, what will you do?")
@@ -81,15 +79,12 @@ def battle(player, enemy):
                     enemy.HP -= player.DEXweapon["damage"]+(player.DEX)/20
                     print("You dealt ",round(player.DEXweapon["damage"]+(player.DEX)/20)," dmg with a", player.DEXweapon["name"],".")
                     break
-                else:
-                    print("Not a valid choice")
-                    sleep(1)
             elif action == "2":
                 print("Use 1- poison dart(0 MP), 2- teleport(10 MP), 3- heal (20 MP) or 4- arcane shot (30 MP)")
                 magic = input()
                 if magic == "1":
-                    print("You shoot a poison dart that deals",(1+player.maxMP/20),"dmg and poisons by",player.maxMP/20,"points.")
-                    poisondmg += 1
+                    print("You shoot a poison dart that deals",round(1+player.maxMP/20),"dmg and poisons by",round(player.maxMP/20),"points.")
+                    poisondmg += player.maxMP/20
                     enemy.HP -= 1 + player.maxMP/20
                     break
                 elif magic == "2" and player.MP >= 10:
@@ -102,29 +97,34 @@ def battle(player, enemy):
                     if heal > difference:
                         heal = difference
                     player.HP += heal
-                    print("You were healed by",heal,"HP.")
+                    print("You were healed by",round(heal),"HP.")
                     player.MP -= 20
                     break
                 elif magic == "4" and player.MP >= 30:
-                    print("You fire a magic arrow that deals",(player.maxMP/5),"damage")
+                    print("You fire a magic arrow that deals",round(player.maxMP/5),"damage")
+                    enemy.HP -= player.maxMP/5
                     player.MP -= 30
                     break
-                else:
-                    print("Not a valid choice")
-                playerFeedback()
                 
+            print("Not a valid choice")
+            playerFeedback()
 
-
+                
         if teleported == True:
             print("You teleported back to the merchant.")
             break
 
+#enemy turn
+
+        if poisondmg > 0:
+            enemy.HP -= poisondmg
+            print("Your stacked poison dealt",poisondmg,"dmg.")
         playerFeedback()
         
 
 def game():
     player = characterCreation()
-    os.system("clear")
+    playerFeedback()
     bad = enemy("teste",50,{"name":"knife","damage":2})
     battle(player,bad)
     return
