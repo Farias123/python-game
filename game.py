@@ -32,12 +32,14 @@ class char:
             self.DEX = 50
 
 class enemy:
-    def __init__(self, name, HP, attack):
+    def __init__(self, name, HP, attack, skill = None):
         self.name = name
-        self.HP = HP
+        self.maxHP = self.HP = HP
         self.attack = attack
+        if skill != None:
+            self.skill = skill
 
-def playerFeedback():
+def player_feedback():
     sleep(0.5)
     input("Press enter to continue")
     if os.name == "posix":
@@ -45,7 +47,7 @@ def playerFeedback():
     else:
         os.system("cls")
 
-def characterCreation():
+def character_creation():
     print("Hi there adventurer. In this adventure you will have to make choices.")
     print("To select options you need to type the number next to the option you want.")
     charName = input("What's your name? ")
@@ -107,7 +109,7 @@ def battle(player, enemy):
                     break
                 
             print("Not a valid choice")
-            playerFeedback()
+            player_feedback()
 
                 
         if teleported == True:
@@ -119,13 +121,13 @@ def battle(player, enemy):
         if poisondmg > 0:
             enemy.HP -= poisondmg
             print("Your stacked poison dealt",poisondmg,"dmg.")
-        playerFeedback()
+        player_feedback()
         
 
 def game():
-    player = characterCreation()
-    playerFeedback()
-    bad = enemy("teste",50,{"name":"knife","damage":2})
+    player = character_creation()
+    player_feedback()
+    bad = enemy("teste",50,{"name":"knife","damage":2},{})
     battle(player,bad)
     return
 
