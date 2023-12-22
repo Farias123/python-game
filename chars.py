@@ -1,3 +1,6 @@
+from spells import all_spells, Spell
+
+
 class Char:
     def __init__(self, name):
         self.name = name
@@ -5,10 +8,7 @@ class Char:
         self.STRweapon = {"name": "stick", "damage": 5}
         self.DEXweapon = {"name": "dagger", "damage": 5}
         self.backpack = []
-        self.spells = [
-            {"name": "poison dart", "cost": 0}, {"name": "teleport", "cost": 10}, {"name": "heal", "cost": 20},
-            {"name": "arcane shot", "cost": 30}
-        ]
+        self.prepared_spells = self.known_spells = [all_spells[i] for i in range(4)]
         self.spells_equipped = []
 
     def weapon_damage(self, style='STR'):

@@ -24,9 +24,12 @@ def character_creation():
             print("2-Mage")
             print("3-Rogue")
             char_class = int(input())
+            if char_class not in range(1, 4):
+                raise ValueError
             break
         except ValueError:
-            print("Type a valid number.")
+            print("Not a valid choice.")
+            player_feedback()
             continue
     player_base = Char(char_name)
     possibilities = {1: Fighter(player_base), 2: Mage(player_base), 3: Rogue(player_base)}
@@ -35,9 +38,8 @@ def character_creation():
 
 
 def battle(player, enemy):
-    teleported = False
-    poisondmg = 0
-    while True:
+    spell = None
+    while enemy.HP > 0:
         while True:
             print(f"You have {round(player.HP)} HP and {player.MP} MP.")
             print(f"{enemy.name} has {round(enemy.HP)} HP.")
@@ -49,60 +51,64 @@ def battle(player, enemy):
                 attack = input()
                 if attack == "1":
                     enemy.HP -= player.weapon_damage('STR')
-                    print(f"You dealt {player.weapon_damage('STR')} dmg with {player.STRweapon['name']}.")
-                    break 
+                    print(f"You dealt {player.weapon_damage('STR')} dmg with a {player.STRweapon['name']}.")
+                    break
                 elif attack == "2":
                     enemy.HP -= player.weapon_damage('DEX')
                     print(f"You dealt {player.weapon_damage('DEX')} dmg with a {player.DEXweapon['name']}.")
                     break
             elif action == "2":
-                print("Use 1- poison dart(0 MP), 2- teleport(10 MP), 3- heal (20 MP) or 4- arcane shot (30 MP)")
-                magic = input()
-                if magic == "1":
-                    print(f"You shoot a poison dart that deals {round(1+player.maxMP/20)} dmg and poisons by "
-                          f"{round(player.maxMP / 20)} points.")
-                    poisondmg += player.maxMP/20
-                    enemy.HP -= 1 + player.maxMP/20
-                    break
-                elif magic == "2" and player.MP >= 10:
-                    teleported = True    
-                    player.MP -= 10
-                    break
-                elif magic == "3" and player.MP >= 20:
-                    difference = player.maxHP - player.HP
-                    heal = 15 + player.maxMP/20
-                    if heal > difference:
-                        heal = difference
-                    player.HP += heal
-                    print(f"You were healed by {round(heal)} HP.")
-                    player.MP -= 20
-                    break
-                elif magic == "4" and player.MP >= 30:
-                    print(f"You fire a magic arrow that deals {round(player.maxMP / 5)} damage")
-                    enemy.HP -= player.maxMP/5
-                    player.MP -= 30
-                    break
-                
+                available_spells = {player.prepared_spells.index(x) + 1: x for x in player.prepared_spells}
+                choice_text = "Use "
+                for k, v in available_spells.items():
+                    choice_text += f"{k}- {v.name} ({v.cost} MP)"
+                    if k == 3:
+                        choice_text += " or "
+                        continue
+                    elif k == 4:
+                        continue
+                    else:
+                        choice_text += ", "
+                print(choice_text)
+                try:
+                    old_spell = spell
+                    magic = int(input())
+                    if magic in range(1, 5):
+                        spell = available_spells[magic]
+                        spell.action(spell, player, enemy)
+
+                        if spell.end_effect is None and old_spell.end_effect is not None:
+                            spell.end_effect = old_spell.end_effect
+                        break
+                except:
+                    pass
+
             print("Not a valid choice")
             player_feedback()
 
-        if teleported:
-            print("You teleported back to the merchant.")
-            break
+        if spell is not None:
+            if spell.end_effect is not None:
+                spell.end_effect()
 
-# enemy turn
+            if spell.end_break is not None:
+                if spell.end_break: break
 
-        if poisondmg > 0:
-            enemy.HP -= poisondmg
-            print(f"Your stacked poison dealt {poisondmg} dmg.")
+        # enemy turn
+
         player_feedback()
-        
+    if enemy.HP <= 0:
+        print(f"You defeated the enemy {enemy.name}")
+        return True  # victory
+    else:
+        return False  # ran away
+
 
 def game():
     player = character_creation()
     player_feedback()
     bad = Enemy("teste", 50, {"name": "knife", "damage": 2}, {})
-    battle(player, bad)
+    victory = battle(player, bad)
+    # level up
     return
 
 
