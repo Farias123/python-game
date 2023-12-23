@@ -1,7 +1,13 @@
 import os
 from time import sleep
 from chars import Char, Fighter, Mage, Rogue, Enemy
-from spells import Spell
+from battle_resources.skills import Skill
+from battle_resources.spells import Spell
+
+
+def save_game():
+    # jsons
+    pass
 
 
 def player_feedback():
@@ -108,7 +114,8 @@ def battle(player, enemy):
 def game():
     player = character_creation()
     player_feedback()
-    bad = Enemy("teste", 50, {"name": "knife", "damage": 2}, {})
+    enemy_skill = Skill()
+    bad = Enemy("teste", 50, {"name": "knife", "damage": 2}, {""})
     victory = battle(player, bad)
     # level up
     return

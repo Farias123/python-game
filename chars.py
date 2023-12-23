@@ -1,5 +1,5 @@
-from spells import all_spells, Spell
-from weapons import all_weapons, Weapon
+from battle_resources.spells import all_spells
+from battle_resources.weapons import all_weapons
 
 
 class Char:
@@ -13,13 +13,21 @@ class Char:
         self.backpack = []
         self.prepared_spells = base_spells.copy()
         self.known_spells = base_spells.copy()
-        self.spells_equipped = []
+        self.skills = []
+        self.atk_buff_status = 1
+        self.def_buff_status = 1
 
-    def weapon_damage(self, style='STR'):
-        if style == 'DEX':
-            return round(self.DEXweapon['damage'] + self.DEX / 20)
-        elif style == 'STR':
-            return round(self.STRweapon['damage'] + self.STR / 20)
+    def rest(self):
+        pass
+
+    def buy_sell_item(self):
+        pass
+
+    def learn_spell(self):
+        pass
+
+    def prepare_spell(self):
+        pass
 
 
 class Mage(Char):
@@ -55,3 +63,5 @@ class Enemy:
         self.maxHP = self.HP = HP
         self.attack = attack
         self.skill = skill
+        self.atk_de_buff_status = 1
+        self.def_de_buff_status = 1
