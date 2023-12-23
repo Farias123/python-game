@@ -1,14 +1,18 @@
 from spells import all_spells, Spell
+from weapons import all_weapons, Weapon
 
 
 class Char:
     def __init__(self, name):
+        base_spells = [x for x in all_spells if x.name in ["poison dart", "teleport", "heal", "arcane shot"]]
+        base_weapons = [x for x in all_weapons if x.name in ["stick", "dagger"]]
         self.name = name
         self.gold = 0
-        self.STRweapon = {"name": "stick", "damage": 5}
-        self.DEXweapon = {"name": "dagger", "damage": 5}
+        self.prepared_weapons = base_weapons.copy()
+        self.owned_weapons = base_weapons.copy()
         self.backpack = []
-        self.prepared_spells = self.known_spells = [all_spells[i] for i in range(4)]
+        self.prepared_spells = base_spells.copy()
+        self.known_spells = base_spells.copy()
         self.spells_equipped = []
 
     def weapon_damage(self, style='STR'):
@@ -50,6 +54,4 @@ class Enemy:
         self.name = name
         self.maxHP = self.HP = HP
         self.attack = attack
-
-        if skill is not None:
-            self.skill = skill
+        self.skill = skill
