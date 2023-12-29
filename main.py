@@ -1,4 +1,5 @@
 import os
+from random import random
 from time import sleep
 from chars import Char, Fighter, Mage, Rogue, Enemy
 from battle_resources.skills import Skill
@@ -49,6 +50,18 @@ def character_creation():
     return player
 
 
+def enemy_turn(player, enemy):
+    if enemy.skill_cooldown <= 0:
+        action = random()
+
+        if action < 0.5:
+            enemy.use_skill(player, enemy)
+            return
+    else:
+        enemy.skill_cooldown -= 1
+    enemy.action(player)
+
+
 def battle(player, enemy):
     spell = Spell("placeholder", 0)
     while enemy.HP > 0:
@@ -94,14 +107,17 @@ def battle(player, enemy):
             print("Not a valid choice")
             player_feedback()
 
+        if enemy.HP < 0:
+            break
+
+        enemy_turn(player, enemy)
+
         if spell is not None:
             if spell.end_effect is not None:
                 spell.end_effect()
 
             if spell.end_break is not None:
                 if spell.end_break: break
-
-        # enemy turn
 
         player_feedback()
     if enemy.HP <= 0:
@@ -114,8 +130,8 @@ def battle(player, enemy):
 def game():
     player = character_creation()
     player_feedback()
-    enemy_skill = Skill()
-    bad = Enemy("teste", 50, {"name": "knife", "damage": 2}, {""})
+    enemy_skill = Skill("atk_debuff", "atk_debuff", user='enemy', de_buff_magnitude=0.75)
+    bad = Enemy("teste", 50, {"name": "knife", "damage": 2}, enemy_skill)
     victory = battle(player, bad)
     # level up
     return

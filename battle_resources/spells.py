@@ -23,6 +23,7 @@ def poison_dart_action(spell, player, enemy):
             spell.poisondmg -= 2
 
     spell.end_effect = end_effect
+    player.MP -= spell.cost
 
 
 def teleport_action(spell, player, enemy):
@@ -33,6 +34,7 @@ def teleport_action(spell, player, enemy):
         print("You teleported back to the merchant.")
 
     spell.end_effect = end_effect
+    player.MP -= spell.cost
 
 
 def heal_action(spell, player, enemy):
@@ -43,13 +45,14 @@ def heal_action(spell, player, enemy):
         heal = difference
     player.HP += heal
     print(f"You were healed by {round(heal)} HP.")
-
+    player.MP -= spell.cost
 
 def arcane_shot_action(spell, player, enemy):
     # cost = 30
     dmg = (player.maxMP/5)*player.atk_buff_status/enemy.def_buff_status
     print(f"You fire a magic arrow that deals {round(dmg)} damage")
     enemy.HP -= dmg
+    player.MP -= spell.cost
 
 
 actions = [poison_dart_action, teleport_action, heal_action, arcane_shot_action]

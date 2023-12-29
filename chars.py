@@ -58,10 +58,21 @@ class Fighter(Char):
 
 
 class Enemy:
-    def __init__(self, name, HP, attack, skill=None):
+    def __init__(self, name, HP, attack, skill):
         self.name = name
         self.maxHP = self.HP = HP
         self.attack = attack
         self.skill = skill
         self.atk_buff_status = 1
         self.def_buff_status = 1
+        self.skill_cooldown = 0
+
+    def action(self, player):
+        damage_dealt = self.attack["damage"]*self.atk_buff_status/player.def_buff_status
+        player.HP -= damage_dealt
+        print(f"{self.name} dealt {round(damage_dealt)} damage with a {self.attack['name']}")
+
+    def use_skill(self, player, enemy):
+        self.skill.user = 'enemy'
+        self.skill.action(player, enemy)
+        self.skill_cooldown += 1
