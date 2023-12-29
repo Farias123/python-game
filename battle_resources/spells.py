@@ -8,16 +8,18 @@ class Spell:
 
 
 def poison_dart_action(spell, player, enemy):
-    print(f"You shoot a poison dart that deals {round(1 + player.maxMP / 20)} dmg and poisons by "
+    damage_dealt = (1 + player.maxMP / 20)*player.atk_buff_status/enemy.def_buff_status
+    print(f"You shoot a poison dart that deals {round(damage_dealt)} dmg and poisons by "
           f"{round(player.maxMP / 20)} points.")
     spell.poisondmg = player.maxMP / 20
-    enemy.HP -= 1 + player.maxMP / 20
+    enemy.HP -= damage_dealt
     # cost = 0
 
     def end_effect():
         if spell.poisondmg > 0:
-            enemy.HP -= spell.poisondmg
-            print(f"Your stacked poison dealt {spell.poisondmg} dmg.")
+            poison_dmg = spell.poisondmg*player.atk_buff_status/enemy.def_buff_status
+            enemy.HP -= poison_dmg
+            print(f"Your stacked poison dealt {round(poison_dmg)} dmg.")
             spell.poisondmg -= 2
 
     spell.end_effect = end_effect
@@ -45,7 +47,7 @@ def heal_action(spell, player, enemy):
 
 def arcane_shot_action(spell, player, enemy):
     # cost = 30
-    dmg = player.maxMP/5
+    dmg = (player.maxMP/5)*player.atk_buff_status/enemy.def_buff_status
     print(f"You fire a magic arrow that deals {round(dmg)} damage")
     enemy.HP -= dmg
 

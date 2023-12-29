@@ -13,8 +13,9 @@ class Weapon:
         return round(self.basedmg + mod)
 
     def action(self, player, enemy):
-        enemy.HP -= self.damage(player)
-        print(f"You dealt {self.damage(player)} dmg with a {self.name}.")
+        damage_dealt = self.damage(player)*player.atk_buff_status/enemy.def_buff_status
+        enemy.HP -= damage_dealt
+        print(f"You dealt {damage_dealt} dmg with a {self.name}.")
 
 
 all_weapons = [Weapon("stick", 5, "STR"), Weapon("dagger", 5, "DEX")]
