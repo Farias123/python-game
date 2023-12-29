@@ -63,5 +63,5 @@ class Enemy:
         self.maxHP = self.HP = HP
         self.attack = attack
         self.skill = skill
-        self.atk_de_buff_status = 1
-        self.def_de_buff_status = 1
+        self.atk_buff_status = 1
+        self.def_buff_status = 1
